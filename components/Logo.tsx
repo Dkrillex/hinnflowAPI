@@ -24,25 +24,23 @@ export function LogoMark({ className = '' }: { className?: string }) {
   )
 }
 
-/** 图标 + 名称 + 衬线斜体副名，与两个现有站点的锁定形式一致 */
+/** 图标 + 品牌名，尾部 "AI" 用衬线斜体，与希流两个现有站点的锁定形式一致 */
 export function LogoLockup({
   className = '',
   markClass = 'h-6 w-7',
   nameClass = 'text-[1.0625rem] font-medium tracking-tight',
-  subClass = 'text-[0.9375rem]',
-  sub = 'Hinnflow',
 }: {
   className?: string
   markClass?: string
   nameClass?: string
-  subClass?: string
-  sub?: string | null
 }) {
   return (
-    <span className={`flex items-center gap-2.5 select-none ${className}`}>
+    <span className={`flex items-center gap-2 select-none ${className}`}>
       <LogoMark className={markClass} />
-      <span className={nameClass}>{brand.name}</span>
-      {sub && <span className={`font-serif italic text-muted ${subClass}`}>{sub}</span>}
+      <span className={nameClass}>
+        {brand.nameMain}
+        <span className="font-serif italic">{brand.nameAccent}</span>
+      </span>
     </span>
   )
 }

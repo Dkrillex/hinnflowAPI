@@ -4,9 +4,12 @@
  */
 
 export const brand = {
-  name: 'XIFLOW',
+  name: 'hinnflowAI',
+  // 标识里 "AI" 走衬线斜体，所以名字拆成两段
+  nameMain: 'hinnflow',
+  nameAccent: 'AI',
   tagline: 'Next Gen AI Interface Platform',
-  email: 'support@xiflow.ai',
+  email: 'business@hinnflow.com',
   year: 2026,
 }
 

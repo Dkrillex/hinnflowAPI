@@ -24,10 +24,12 @@ export function SiteFooter() {
         {/* 链接区 */}
         <div className="mt-24 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4 md:gap-10">
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2.5 text-fg">
+            <div className="flex items-center gap-2 text-fg">
               <LogoMark className="h-6 w-7" />
-              <span className="text-[1.0625rem] font-medium tracking-tight">{brand.name}</span>
-              <span className="font-serif text-[0.9375rem] italic text-muted">Hinnflow</span>
+              <span className="text-[1.0625rem] font-medium tracking-tight">
+                {brand.nameMain}
+                <span className="font-serif italic">{brand.nameAccent}</span>
+              </span>
             </div>
             <p className="mt-4 max-w-[18rem] text-[0.875rem] leading-relaxed text-muted">{brand.tagline}</p>
             <a
