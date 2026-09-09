@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: theme('fontFamily.sans');
+}
+
+/* 原站 hero 用的是一张深空/地球底图，这里用等效的多层径向渐变还原，避免引用对方素材 */
+.hero-bg {
+  background-color: #0f172a;
+  background-image:
+    radial-gradient(
+      60rem 40rem at 78% 42%,
+      rgba(37, 99, 235, 0.28) 0%,
+      rgba(30, 64, 175, 0.14) 38%,
+      rgba(15, 23, 42, 0) 70%
+    ),
+    radial-gradient(
+      34rem 34rem at 70% 32%,
+      rgba(96, 165, 250, 0.16) 0%,
+      rgba(15, 23, 42, 0) 65%
+    ),
+    radial-gradient(50rem 30rem at 8% 88%, rgba(29, 78, 216, 0.16) 0%, rgba(15, 23, 42, 0) 70%);
+}
+
+:is(html:not(.dark)) .hero-bg {
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(60rem 40rem at 78% 42%, rgba(37, 99, 235, 0.12) 0%, rgba(255, 255, 255, 0) 70%),
+    radial-gradient(50rem 30rem at 8% 88%, rgba(96, 165, 250, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+/* 页脚的紫→蓝大色块，对应原站 footer_bg.webp */
+.footer-banner {
+  background-image:
+    radial-gradient(38rem 22rem at 84% 18%, rgba(125, 211, 252, 0.5) 0%, rgba(59, 130, 246, 0) 62%),
+    radial-gradient(30rem 26rem at 12% 82%, rgba(139, 92, 246, 0.55) 0%, rgba(76, 29, 252, 0) 60%),
+    linear-gradient(100deg, #4a1dfc 0%, #2b45f4 34%, #1c6ff0 68%, #1a87ed 100%);
+}
+
+/* 卡片内的玻璃层 */
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.1) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
