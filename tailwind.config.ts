@@ -1,58 +1,83 @@
 import type { Config } from 'tailwindcss'
 
+/**
+ * 希流 Hinnflow 设计令牌。
+ * 取值实测自 www.hinnflow.com 与 canvas.hinnflow.com：
+ *   强调色 #05AFFE / #7DD3FC / #0544E9，药丸 999px，卡片 20px，
+ *   eyebrow 11px + 0.32em 字距，主标题 96px / 500 字重 / -0.02em。
+ * 语义色走 CSS 变量（见 globals.css），深浅两套主题共用同一批类名。
+ */
 const config: Config = {
   darkMode: 'class',
-  // lib/site.ts 里带有按钮底色等类名，必须一并扫描，否则 JIT 不会生成对应样式
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        // 取自原站：CTA / 强调蓝
-        brand: '#1354EE',
-        'brand-dark': '#0F42C0',
-        ink: '#101828',
-        primary: {
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
+        bg: 'rgb(var(--bg) / <alpha-value>)',
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        raised: 'rgb(var(--raised) / <alpha-value>)',
+        fg: 'rgb(var(--fg) / <alpha-value>)',
+        muted: 'rgb(var(--muted) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
+        flow: {
+          DEFAULT: '#05AFFE',
+          soft: '#7DD3FC',
+          deep: '#0544E9',
         },
-        hairline: {
-          light: '#EBF0F7',
-          card: '#E6ECF6',
-          plan: '#E1E3E6',
-        },
+        // 浮在洋流上的小字标签专用色（深浅两套各取一档，保证 4.5:1）
+        accent: 'rgb(var(--accent-text) / <alpha-value>)',
       },
       fontFamily: {
-        // macOS 自带 DIN Alternate，与原站 DIN Custom 观感一致；其余为跨平台回退
-        din: ['"DIN Alternate"', '"DIN Condensed"', 'Barlow', 'system-ui', 'sans-serif'],
-        dinBold: ['"DIN Alternate"', '"DIN Condensed"', 'Barlow', 'system-ui', 'sans-serif'],
-        sans: ['"Söhne Buch"', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        // 两站都不加载正文 webfont，统一用系统栈
+        sans: [
+          '"Helvetica Neue"',
+          'Helvetica',
+          'Arial',
+          '"PingFang SC"',
+          '"Hiragino Sans GB"',
+          '"Microsoft YaHei"',
+          'sans-serif',
+        ],
+        // 唯一的 webfont：强调词的衬线斜体
+        serif: ['var(--font-serif)', 'Georgia', 'serif'],
+      },
+      // 发丝描边用的中间档透明度，默认 opacity 表里没有
+      opacity: {
+        12: '0.12',
+        15: '0.15',
+        35: '0.35',
+        45: '0.45',
+        55: '0.55',
+      },
+      fontSize: {
+        eyebrow: ['0.6875rem', { lineHeight: '1', letterSpacing: '0.32em' }],
+        display: ['6rem', { lineHeight: '1.08', letterSpacing: '-0.02em' }],
+      },
+      borderRadius: {
+        card: '1.25rem',
+        tile: '0.75rem',
       },
       keyframes: {
+        drift: {
+          '0%': { strokeDashoffset: '1200' },
+          '100%': { strokeDashoffset: '0' },
+        },
         'pulse-slow': {
-          '0%, 100%': { opacity: '0.55', transform: 'scale(1)' },
-          '50%': { opacity: '0.9', transform: 'scale(1.06)' },
+          '0%, 100%': { opacity: '0.45' },
+          '50%': { opacity: '0.85' },
         },
-        'spin-slow': {
-          from: { transform: 'rotate(0deg)' },
-          to: { transform: 'rotate(360deg)' },
-        },
-        marquee: {
-          from: { transform: 'translateX(0)' },
-          to: { transform: 'translateX(-50%)' },
+        rise: {
+          from: { opacity: '0', transform: 'translate3d(0,1.5rem,0)' },
+          to: { opacity: '1', transform: 'translate3d(0,0,0)' },
         },
       },
       animation: {
+        drift: 'drift 14s linear infinite',
         'pulse-slow': 'pulse-slow 6s ease-in-out infinite',
-        'spin-slow': 'spin-slow 40s linear infinite',
-        marquee: 'marquee 30s linear infinite',
+        rise: 'rise 0.7s cubic-bezier(0.16,1,0.3,1) both',
+      },
+      transitionTimingFunction: {
+        flow: 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
     },
   },

@@ -1,6 +1,16 @@
 import type { Metadata, Viewport } from 'next'
+import { Instrument_Serif } from 'next/font/google'
 import './globals.css'
 import { brand } from '@/lib/site'
+
+/** 唯一的 webfont：强调词的衬线斜体，与 www.hinnflow.com 一致 */
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: `${brand.name} - Enterprise AI Interface Service`,
@@ -23,7 +33,7 @@ const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t?t=
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={instrumentSerif.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

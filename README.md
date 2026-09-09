@@ -1,43 +1,69 @@
 # XiFlow API — 首页
 
-参照 `apipro.ai` 首页版式 1:1 复刻的落地页。技术栈与参考站一致：**Next.js 14 App Router + React 18 + Tailwind CSS**（参考站的控制台 `api.apipro.ai` 则是 React + Rsbuild，首页用 iframe 内嵌官网）。
+AI 网关落地页。**Next.js 14 App Router + React 18 + Tailwind CSS**，全静态预渲染。
+
+版式骨架源自 `apipro.ai`，视觉主题统一到希流 Hinnflow（`www.hinnflow.com` 与 `canvas.hinnflow.com`）。
 
 ## 开发
 
 ```bash
 npm install
 npm run dev     # http://localhost:3000
-npm run build   # 全静态预渲染
+npm run build
 ```
+
+> 注意：不要在 `next dev` 运行时执行 `npm run build`，两者共用 `.next/`，会把开发服务器的 chunk 清单覆盖掉。
 
 ## 目录
 
 | 路径 | 说明 |
 | --- | --- |
 | `lib/site.ts` | 品牌名、邮箱、全部文案。改站点信息只需要动这一个文件 |
-| `components/motion.tsx` | 滚动入场、标题逐字动画、数字滚动三个动效原语 |
-| `components/Hero.tsx` | 首屏：徽标胶囊、双行标题、三项指标、CTA、右侧线框星球 |
-| `components/ModelsSection.tsx` | 支持模型：左侧三条说明（悬停切换高亮）+ 右侧模型矩阵面板 |
-| `components/FeaturesSection.tsx` | 六宫格优势卡，悬停整卡变 `#1354EE` 并展开要点 |
-| `components/PricingSection.tsx` | 三档价格卡，底部通栏 CTA 条 |
-| `components/SiteFooter.tsx` | 渐变通栏 + 链接区 + 96px 大字标语 |
+| `components/FlowBackdrop.tsx` | 流动背景：双层 WebGL MeshGradient + 静态兜底 |
+| `components/motion.tsx` | 滚动入场与数字滚动动效原语 |
+| `components/SectionHeading.tsx` | `Eyebrow` 小标签、`SectionTitle` 主标题、`Em` 衬线斜体强调 |
+| `components/Hero.tsx` | 首屏 |
+| `components/ModelsSection.tsx` | 支持模型：左侧说明悬停切换 + 右侧模型矩阵 |
+| `components/FeaturesSection.tsx` | 六宫格优势卡（图标砖 + 编号 + 要点 + 指标） |
+| `components/PricingSection.tsx` | 三档价格卡 |
+| `components/SiteFooter.tsx` | 渐变通栏 + 链接区 + 大字标语 |
 
-## 设计参数
+## 主题：希流设计语言
 
-从参考站实测提取，集中在 `tailwind.config.ts` 与 `app/globals.css`：
+两个参考站的共同点（实测提取），也是本项目的主题基线：
 
-- 底色 `#0F172A`(slate-900)，卡片 `#121A2D`，描边 `rgba(255,255,255,.1)` / 浅色 `#E6ECF6`
-- 主色 `#1354EE`（CTA）、`#2563EB`（徽章）、`#60A5FA`（副标题）
-- 容器 `max-w-7xl` + `px-4 sm:px-6 lg:px-8`，导航栏高 `46px` 固定吸顶
-- 标题字族：macOS 自带 `DIN Alternate`，回退 `Barlow` / system-ui
-- 入场缓动 `cubic-bezier(.16,1,.3,1)` / 700ms，标题逐字间隔 30ms
+- **强调色** `#05AFFE`，辅以 `#7DD3FC` 与 `#0544E9`
+- **药丸按钮** 999px 圆角，主实心反色 + 次描边透明底成对出现
+- **卡片** 20px 圆角、1px 发丝描边、不用投影
+- **小标签** 11px + `0.32em` 字距 + 全大写
+- **主标题** 500 字重、`-0.02em` 字距、1.08 行高
+- **系统字栈**（Helvetica Neue / PingFang SC），唯一 webfont 是强调词用的 `Instrument Serif` 斜体
+- **无彩色骨架 + 单一强调色**：深色对应 `www`，浅色对应 `canvas`，互为反相
+
+### 流动背景
+
+`components/FlowBackdrop.tsx` 与 `canvas.hinnflow.com` 同实现：`@paper-design/shaders-react`
+的 `MeshGradient` 叠两层（a 层 distortion 1.6 / speed 0.3，b 层 distortion 1.8 / speed 0.2 且
+半透明），两层错速产生洋流般的缓慢推移。配色数组沿用希流现有的深浅两套。
+
+三层保护：WebGL 不可用时退回等构图的静态径向渐变；`prefers-reduced-motion` 时把 speed 归零
+（画面保留、不再动）；`maxPixelCount` 封顶避免高分屏按物理像素铺满。
+
+### 薄纱与对比度
+
+洋流最亮处约 `#AAB0BA`，白字压上去只有 2.2:1，所以 `.flow-scrim` 是一层随内容滚动的纵向渐变：
+首屏 0.58（那里只有大字标题，洋流看得最清），往下加厚到 0.66（正文区）。实测最坏背景 `#44464C` 下
+正文灰 4.64:1、白色标题 9.43:1，均过 4.5:1。
+
+由此派生两条约定：
+
+- 首屏内的小字用 `text-fg/80`、导航用 `text-fg/75`，不用 `text-muted`——薄纱在那里较薄
+- 分区小标签用 `--accent-text`（深色 `#7DD3FC` / 浅色 `#0369A1`）而非品牌青，
+  品牌青 `#05AFFE` 只用在卡片等不透明表面上
+
+改动薄纱或洋流配色后，重跑对比度校验再合并。
 
 ## 与参考站的取舍
 
-版式、间距、配色、动效按实测 1:1 对齐；以下几处是自绘替代，没有引用对方素材：
-
-- Logo 用内联 SVG 重绘（汇聚节点 + 向上箭头）
-- 首屏 `banner-bg.webp`、页脚 `footer_bg.webp` 用等效多层渐变还原
-- 模型面板里的厂商标识改为中性几何字形
-
-品牌名、邮箱默认是 `XIFLOW` / `support@xiflow.ai`，在 `lib/site.ts` 顶部的 `brand` 里改。
+Logo 取自希流现有站点（`public/logo.svg`，内联为组件以跟随主题反色）。模型面板里的厂商标识
+是中性几何字形，没有复制各家商标。

@@ -1,12 +1,29 @@
+/** 全大写小标签：11px + 0.32em 字距 + 强调色，希流两站通用的分区标记 */
 export function Eyebrow({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <div className={`eyebrow ${className}`}>{children}</div>
+}
+
+/**
+ * 区块主标题。强调词走衬线斜体（对应 www 首屏那个斜体 Token），
+ * 其余保持系统无衬线，字重 500、字距 -0.02em。
+ */
+export function SectionTitle({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
   return (
-    <div
-      className={`py-[1.25rem] border-b border-t border-solid border-hairline-light dark:border-slate-800 ${className}`}
+    <h2
+      className={`text-[2rem] md:text-[3.25rem] font-medium leading-[1.12] tracking-[-0.02em] text-fg ${className}`}
     >
-      <div className="flex items-center gap-2">
-        <span className="w-4 h-4 rounded-full bg-brand" />
-        <span className="text-ink dark:text-white text-[20px] font-dinBold">{children}</span>
-      </div>
-    </div>
+      {children}
+    </h2>
   )
+}
+
+/** 衬线斜体强调片段 */
+export function Em({ children }: { children: React.ReactNode }) {
+  return <span className="font-serif italic font-normal">{children}</span>
 }

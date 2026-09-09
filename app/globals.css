@@ -2,58 +2,152 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * 深浅两套主题正好对应希流现有的两个站：
+ *   dark  = www.hinnflow.com    纯黑底白字
+ *   light = canvas.hinnflow.com 近白底黑字
+ * 语义变量存 RGB 三元组，好让 Tailwind 的 <alpha-value> 生效。
+ */
 :root {
+  --bg: 244 245 247;
+  --surface: 255 255 255;
+  --fg: 12 12 14;
+  --muted: 92 96 104;
+  --line: 12 12 14;
+  /* 品牌青 #05AFFE 压在浅底上只有 2.45:1，小字标签换成同族深一档的 #0369A1 */
+  --accent-text: 3 105 161;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: 14 16 20;
+  --surface: 18 20 25;
+  --fg: 255 255 255;
+  /* 正文灰要压得住洋流最亮处，实测把这个值定在 178 才有 4.5:1 余量 */
+  --muted: 178 182 191;
+  --line: 255 255 255;
+  /* 同理，深色下小字标签用 www 调色板里更亮的 #7DD3FC，5.9:1 */
+  --accent-text: 125 211 252;
   color-scheme: dark;
 }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg text-fg;
+  }
+
+  ::selection {
+    background: #05affe;
+    color: #fff;
+  }
 }
 
-body {
-  font-family: theme('fontFamily.sans');
+/* ── 流动背景 ─────────────────────────────────────────────────────
+   与 canvas.hinnflow.com 同构：固定铺满、置于内容之下、不吃指针事件。
+   两层 MeshGradient 错速漂移，b 层半透明叠加产生洋流的层次。 */
+.flow-backdrop,
+.flow-fallback {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
 }
 
-/* 原站 hero 用的是一张深空/地球底图，这里用等效的多层径向渐变还原，避免引用对方素材 */
-.hero-bg {
-  background-color: #0f172a;
+.flow-layer-a,
+.flow-layer-b {
+  position: absolute;
+  inset: 0;
+}
+
+.flow-layer-b {
+  opacity: 0.5;
+}
+
+/* WebGL 不可用时的静态兜底，构图与着色器版本对齐 */
+.flow-fallback {
+  background:
+    radial-gradient(60% 50% at 18% 28%, rgba(139, 148, 163, 0.45), transparent 70%),
+    radial-gradient(50% 45% at 82% 22%, rgba(255, 255, 255, 0.7), transparent 70%),
+    radial-gradient(55% 50% at 68% 82%, rgba(197, 203, 212, 0.65), transparent 72%), #f4f5f7;
+}
+
+.dark .flow-fallback {
+  background:
+    radial-gradient(60% 50% at 18% 28%, rgba(44, 49, 58, 0.7), transparent 70%),
+    radial-gradient(50% 45% at 82% 22%, rgba(212, 216, 224, 0.28), transparent 70%),
+    radial-gradient(55% 50% at 68% 82%, rgba(16, 18, 22, 0.85), transparent 72%), #101216;
+}
+
+/* 压在洋流之上的一层薄纱：让正文始终有足够对比度，同时保留流动感 */
+/*
+ * 薄纱不是固定层，而是随内容滚动的整页渐变：首屏薄（洋流看得清，那里只有大字白标题），
+ * 往下逐渐加厚到正文安全线。数值是实测出来的——洋流最亮处约 #AAB0BA，
+ * 0.52 时白色标题 5.7:1，0.66 时正文灰 4.87:1，都过 4.5:1。
+ */
+.flow-scrim {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--bg) / 0.7) 0,
+    rgb(var(--bg) / 0.7) 70vh,
+    rgb(var(--bg) / 0.82) 115vh,
+    rgb(var(--bg) / 0.82) 100%
+  );
+}
+
+.dark .flow-scrim {
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--bg) / 0.58) 0,
+    rgb(var(--bg) / 0.58) 70vh,
+    rgb(var(--bg) / 0.66) 115vh,
+    rgb(var(--bg) / 0.66) 100%
+  );
+}
+
+@layer components {
+  /* 全大写小标签：11px + 0.32em 字距 + 强调色，两站通用的分区标记 */
+  .eyebrow {
+    @apply text-eyebrow font-medium uppercase text-accent;
+  }
+
+  /* 药丸按钮。尺寸取自 canvas 的 .jc-btn：999px 圆角、15px 字号、34px 横向内边距 */
+  .pill {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-[2.125rem] py-[0.9375rem] text-[0.9375rem] font-medium leading-none transition-all duration-200 ease-flow hover:-translate-y-px;
+  }
+
+  .pill-solid {
+    @apply pill bg-fg text-bg hover:opacity-90;
+  }
+
+  .pill-ghost {
+    @apply pill border border-line/25 text-fg hover:border-line/50 hover:bg-line/5;
+  }
+
+  .pill-flow {
+    @apply pill bg-flow text-white hover:bg-[#0496db];
+  }
+
+  /* 发丝描边卡片：两站卡片圆角都是 20px，且都不用投影 */
+  .card {
+    @apply rounded-card border border-line/12 bg-surface/70 backdrop-blur-xl transition-colors duration-300 ease-flow;
+  }
+}
+
+.flow-banner {
   background-image:
-    radial-gradient(
-      60rem 40rem at 78% 42%,
-      rgba(37, 99, 235, 0.28) 0%,
-      rgba(30, 64, 175, 0.14) 38%,
-      rgba(15, 23, 42, 0) 70%
-    ),
-    radial-gradient(
-      34rem 34rem at 70% 32%,
-      rgba(96, 165, 250, 0.16) 0%,
-      rgba(15, 23, 42, 0) 65%
-    ),
-    radial-gradient(50rem 30rem at 8% 88%, rgba(29, 78, 216, 0.16) 0%, rgba(15, 23, 42, 0) 70%);
-}
-
-:is(html:not(.dark)) .hero-bg {
-  background-color: #f8fafc;
-  background-image:
-    radial-gradient(60rem 40rem at 78% 42%, rgba(37, 99, 235, 0.12) 0%, rgba(255, 255, 255, 0) 70%),
-    radial-gradient(50rem 30rem at 8% 88%, rgba(96, 165, 250, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
-}
-
-/* 页脚的紫→蓝大色块，对应原站 footer_bg.webp */
-.footer-banner {
-  background-image:
-    radial-gradient(38rem 22rem at 84% 18%, rgba(125, 211, 252, 0.5) 0%, rgba(59, 130, 246, 0) 62%),
-    radial-gradient(30rem 26rem at 12% 82%, rgba(139, 92, 246, 0.55) 0%, rgba(76, 29, 252, 0) 60%),
-    linear-gradient(100deg, #4a1dfc 0%, #2b45f4 34%, #1c6ff0 68%, #1a87ed 100%);
-}
-
-/* 卡片内的玻璃层 */
-.glass {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.1) 100%);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+    radial-gradient(32rem 20rem at 82% 16%, rgb(125 211 252 / 0.45) 0%, transparent 64%),
+    linear-gradient(104deg, #0544e9 0%, #0570f0 46%, #05affe 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {

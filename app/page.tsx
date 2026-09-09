@@ -1,3 +1,4 @@
+import { FlowBackdrop } from '@/components/FlowBackdrop'
 import { Navbar } from '@/components/Navbar'
 import { Hero } from '@/components/Hero'
 import { ModelsSection } from '@/components/ModelsSection'
@@ -7,15 +8,21 @@ import { SiteFooter } from '@/components/SiteFooter'
 
 export default function HomePage() {
   return (
-    <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 dark:text-white selection:bg-primary-500 selection:text-white transition-colors duration-300">
-      <Navbar />
-      <main className="w-full">
-        <Hero />
-        <ModelsSection />
-        <FeaturesSection />
-        <PricingSection />
-      </main>
-      <SiteFooter />
-    </div>
+    <>
+      {/* 洋流固定铺满视口；薄纱随内容滚动，首屏薄、正文区厚 */}
+      <FlowBackdrop />
+
+      <div className="relative z-10 w-full min-h-screen">
+        <div aria-hidden className="flow-scrim" />
+        <Navbar />
+        <main className="w-full">
+          <Hero />
+          <ModelsSection />
+          <FeaturesSection />
+          <PricingSection />
+        </main>
+        <SiteFooter />
+      </div>
+    </>
   )
 }

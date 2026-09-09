@@ -60,43 +60,6 @@ export function Reveal({
   )
 }
 
-/** 标题逐字入场：每字 30ms 间隔、700ms 时长，与参考站一致 */
-export function CharReveal({
-  text,
-  className = '',
-  startDelay = 0,
-  step = 30,
-}: {
-  text: string
-  className?: string
-  startDelay?: number
-  step?: number
-}) {
-  const { ref, inView } = useInView<HTMLSpanElement>()
-  return (
-    <span ref={ref} className={className}>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
-        {Array.from(text).map((ch, i) => (
-          <span
-            key={`${ch}-${i}`}
-            className="inline-block transition-all ease-out"
-            style={{
-              opacity: inView ? 1 : 0,
-              transform: inView ? 'translate3d(0,0,0)' : 'translate3d(0,14px,0)',
-              transitionDelay: `${startDelay + i * step}ms`,
-              transitionDuration: '700ms',
-              whiteSpace: 'pre',
-            }}
-          >
-            {ch}
-          </span>
-        ))}
-      </span>
-    </span>
-  )
-}
-
 /** hero 数字滚动：0 → 目标值 */
 export function CountUp({
   value,

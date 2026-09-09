@@ -1,129 +1,80 @@
 'use client'
 
-import { CharReveal, Reveal } from './motion'
-import { Eyebrow } from './SectionHeading'
+import { Reveal } from './motion'
+import { Em, Eyebrow, SectionTitle } from './SectionHeading'
 import { pricing } from '@/lib/site'
-
-function PlanIcon({ kind }: { kind: string }) {
-  const common = {
-    fill: 'none',
-    stroke: 'currentColor',
-    strokeWidth: 1.3,
-    strokeLinecap: 'round' as const,
-    strokeLinejoin: 'round' as const,
-  }
-  if (kind === 'calc') {
-    return (
-      <svg viewBox="0 0 48 48" className="w-full h-full" {...common}>
-        <circle cx="24" cy="24" r="15" strokeDasharray="2 3" />
-        {/* 左上加号、右下减号，中间一道斜线，对应“按量计费”的算子意象 */}
-        <path d="M16.5 19.5h6M19.5 16.5v6" />
-        <path d="M25.5 28.5h6" />
-        <path d="M30.5 17.5 17.5 30.5" />
-      </svg>
-    )
-  }
-  if (kind === 'gift') {
-    return (
-      <svg viewBox="0 0 48 48" className="w-full h-full" {...common}>
-        <rect x="11" y="18" width="26" height="19" strokeDasharray="2 3" />
-        <path d="M11 24h26M24 18v19" />
-        <path d="M24 18c-3-6-9-6-9-2 0 1.6 1.6 2 4 2h5Zm0 0c3-6 9-6 9-2 0 1.6-1.6 2-4 2h-5Z" />
-      </svg>
-    )
-  }
-  return (
-    <svg viewBox="0 0 48 48" className="w-full h-full" {...common}>
-      <circle cx="24" cy="24" r="15" strokeDasharray="2 3" />
-      <path d="M21 14h6l-1.4 4.2h-3.2L21 14Zm1.4 4.2h3.2L28 28l-4 6-4-6 2.4-9.8Z" />
-    </svg>
-  )
-}
 
 export function PricingSection() {
   return (
-    <section className="w-full flex flex-col justify-center relative">
-      <section className="py-20 md:py-32 bg-white dark:bg-slate-900 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 pointer-events-none" />
+    <section className="relative py-24 md:py-32">
+      <div className="mx-auto w-full max-w-7xl px-6 lg:px-10">
+        <Reveal>
+          <Eyebrow>{pricing.eyebrow}</Eyebrow>
+          <SectionTitle className="mt-6 max-w-4xl">
+            {pricing.headingLead} <Em>{pricing.headingAccent}</Em>
+          </SectionTitle>
+        </Reveal>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Reveal>
-            <Eyebrow className="mb-8">{pricing.eyebrow}</Eyebrow>
-          </Reveal>
+        <div className="mt-16 grid items-stretch gap-5 md:grid-cols-3">
+          {pricing.plans.map((plan, i) => (
+            <Reveal key={plan.name} delay={i * 110} className="h-full">
+              <div
+                className={`card relative flex h-full flex-col p-8 ${
+                  plan.recommended ? 'border-flow/45' : ''
+                }`}
+              >
+                {plan.recommended && (
+                  <span className="absolute right-6 top-6 rounded-full border border-flow/30 bg-flow/10 px-3 py-1 text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-flow">
+                    Recommended
+                  </span>
+                )}
 
-          <div className="mb-16 md:mb-24">
-            <h2 className="text-3xl md:text-[3.5rem] tracking-tight leading-tight md:leading-relaxed dark:text-white text-ink font-dinBold">
-              <span className="inline-block whitespace-normal md:whitespace-nowrap break-words">
-                <CharReveal text={pricing.headingLead} />
-                <CharReveal
-                  text={pricing.headingAccent}
-                  className="text-[#3B4CF0]"
-                  startDelay={pricing.headingLead.length * 30}
-                />
-              </span>
-            </h2>
-          </div>
+                <span className="text-eyebrow font-medium uppercase text-muted">{plan.name}</span>
 
-          <div className="w-full grid md:grid-cols-3 gap-6 md:gap-8 items-stretch">
-            {pricing.plans.map((p, i) => (
-              <Reveal key={p.name} delay={i * 110} className="h-full">
-                <div className="group relative h-full min-h-[35rem] flex flex-col border border-hairline-plan dark:border-white/10 rounded-none pl-6 md:pl-[4.25rem] pr-4 md:pr-6 pt-[52px] pb-[3rem] transition-shadow duration-300 hover:shadow-[0_0.5rem_1.875rem_rgba(19,84,238,0.18)]">
-                  {p.recommended && (
-                    <span className="absolute top-0 right-0 bg-primary-600 text-white text-xs font-bold px-3 py-1">
-                      Recommended
-                    </span>
+                <div className="mt-7 flex items-end gap-1">
+                  {plan.currency && (
+                    <span className="mb-2 text-[1.25rem] text-muted">{plan.currency}</span>
                   )}
-
-                  <div className="w-12 h-12 text-primary-500/80 mb-5">
-                    <PlanIcon kind={p.icon} />
-                  </div>
-
-                  <h3 className="text-[1.25rem] font-dinBold text-ink dark:text-white mb-8">{p.name}</h3>
-
-                  <div className="flex items-end mb-9">
-                    {p.currency && (
-                      <span className="text-[1.5rem] font-din text-ink dark:text-white leading-none mb-2">
-                        {p.currency}
-                      </span>
-                    )}
-                    <span
-                      className={`font-din text-ink dark:text-white leading-[0.95] tracking-tight ${
-                        p.currency ? 'text-[4rem]' : 'text-[2.5rem]'
-                      }`}
-                    >
-                      {p.price}
-                    </span>
-                  </div>
-
-                  <ul className="space-y-5 flex-1">
-                    {p.features.map((f) => (
-                      <li key={f} className="text-sm font-bold text-ink dark:text-white">
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <a
-                    href={p.cta.href}
-                    className={`absolute bottom-0 left-0 right-0 h-12 flex items-center justify-between px-6 text-white font-bold text-[0.9375rem] transition-colors ${p.ctaClass}`}
+                  <span
+                    className={`font-medium leading-[0.95] tracking-[-0.03em] text-fg ${
+                      plan.currency ? 'text-[3.5rem]' : 'text-[2.25rem]'
+                    }`}
                   >
-                    {p.cta.label}
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="w-[1.125rem] h-[1.125rem] transition-transform group-hover:translate-x-1"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M4 12h15m0 0-6-6m6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </a>
+                    {plan.price}
+                  </span>
                 </div>
-              </Reveal>
-            ))}
-          </div>
+
+                <ul className="mt-9 flex-1 space-y-3.5 border-t border-line/10 pt-7">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5 text-[0.875rem] text-muted">
+                      <svg
+                        viewBox="0 0 20 20"
+                        className="mt-[0.2rem] h-3.5 w-3.5 shrink-0 text-flow"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="m4 10.5 4 4 8-9" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <a
+                  href={plan.cta.href}
+                  className={`mt-9 w-full ${plan.recommended ? 'pill-flow' : 'pill-ghost'}`}
+                >
+                  {plan.cta.label}
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M4 12h15m0 0-6-6m6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+              </div>
+            </Reveal>
+          ))}
         </div>
-      </section>
+      </div>
     </section>
   )
 }
