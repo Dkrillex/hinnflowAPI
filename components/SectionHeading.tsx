@@ -23,7 +23,7 @@ export function SectionTitle({
   )
 }
 
-/** 衬线斜体强调片段 */
+/** 衬线强调片段。英文走斜体，中文由 :lang(zh) 改为不倾斜的宋体 */
 export function Em({ children }: { children: React.ReactNode }) {
-  return <span className="font-serif italic font-normal">{children}</span>
+  return <span className="serif-em">{children}</span>
 }

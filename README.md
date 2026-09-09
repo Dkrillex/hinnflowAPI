@@ -18,7 +18,11 @@ npm run build
 
 | 路径 | 说明 |
 | --- | --- |
-| `lib/site.ts` | 品牌名、邮箱、全部文案。改站点信息只需要动这一个文件 |
+| `lib/i18n/dictionaries.ts` | 中英文全部词条。en 是类型基准，zh 用 `Dict` 约束，漏翻编译期报错 |
+| `lib/i18n/context.tsx` | 字典注入与 `localeHref()` 链接前缀 |
+| `middleware.ts` | `/` 按 Accept-Language 重定向到 `/en` 或 `/zh` |
+| `app/[locale]/` | 两个语种各自预渲染，`<html lang>` 与 `<title>` 都随路由段走 |
+| `lib/site.ts` | 与语种无关的品牌常量（名称、邮箱、年份） |
 | `components/FlowBackdrop.tsx` | 流动背景：双层 WebGL MeshGradient + 静态兜底 |
 | `components/motion.tsx` | 滚动入场与数字滚动动效原语 |
 | `components/SectionHeading.tsx` | `Eyebrow` 小标签、`SectionTitle` 主标题、`Em` 衬线斜体强调 |
@@ -27,6 +31,18 @@ npm run build
 | `components/FeaturesSection.tsx` | 六宫格优势卡（图标砖 + 编号 + 要点 + 指标） |
 | `components/PricingSection.tsx` | 三档价格卡 |
 | `components/SiteFooter.tsx` | 渐变通栏 + 链接区 + 大字标语 |
+
+## 多语言
+
+走 Next 官方的 `[locale]` 路由方案而不是客户端切换：`/en` 与 `/zh` 都在构建期预渲染，
+`<html lang>`、`<title>`、`alternates.languages` 都正确，切语种是换路由，不会出现
+"先渲染英文再跳中文"的闪烁。根路径由 `middleware.ts` 按 `Accept-Language` 重定向。
+
+两条中文排版分支写在 `:lang(zh)` 里，不用 JS 判断语种：
+
+- `.eyebrow` 取消全大写（否则 hinnflowAI 会变成 HINNFLOWAI）并把字距从 `0.32em` 收到 `0.12em`
+- `.serif-em` 取消斜体：Instrument Serif 没有汉字，中文会走合成斜体；改用宋体且不倾斜，
+  这也是 `www.hinnflow.com` 的做法
 
 ## 主题：希流设计语言
 

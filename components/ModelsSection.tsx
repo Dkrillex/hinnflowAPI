@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Reveal } from './motion'
 import { Em, Eyebrow, SectionTitle } from './SectionHeading'
-import { models } from '@/lib/site'
+import { useI18n } from '@/lib/i18n/context'
 
 /** 中性几何字形，替代各家厂商商标 */
 function VendorGlyph({ kind }: { kind: number }) {
@@ -40,6 +40,8 @@ function VendorGlyph({ kind }: { kind: number }) {
 }
 
 export function ModelsSection() {
+  const { dict } = useI18n()
+  const models = dict.models
   const [active, setActive] = useState(0)
 
   return (

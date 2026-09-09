@@ -1,8 +1,11 @@
 'use client'
 
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { LogoLockup } from './Logo'
-import { nav } from '@/lib/site'
+import { useI18n, localeHref } from '@/lib/i18n/context'
+import { LOCALE_LABEL, type Locale } from '@/lib/i18n/dictionaries'
 
 function SunIcon() {
   return (
@@ -25,10 +28,15 @@ function MoonIcon() {
 }
 
 export function Navbar() {
+  const { locale, dict } = useI18n()
+  const pathname = usePathname()
   const [dark, setDark] = useState(true)
-  const [lang, setLang] = useState<'EN' | 'ZH'>('EN')
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+
+  const otherLocale: Locale = locale === 'en' ? 'zh' : 'en'
+  // 切语种是换路由而不是改客户端状态，两个语种都是预渲染页，不会有文案闪烁
+  const switchHref = pathname.replace(/^\/(en|zh)(?=\/|$)/, `/${otherLocale}`) || `/${otherLocale}`
 
   useEffect(() => {
     const stored = localStorage.getItem('theme')
@@ -59,65 +67,79 @@ export function Navbar() {
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="flex h-[66px] items-center justify-between">
-          <a href="/" className="text-fg">
+          <Link href={localeHref(locale, '/')} className="text-fg">
             <LogoLockup markClass="h-[22px] w-[26px]" />
-          </a>
+          </Link>
 
           {/* 导航浮在首屏薄纱最薄处，用 fg/75 而非 muted 才够对比度 */}
           <div className="hidden md:flex items-center gap-9 text-[0.9375rem] text-fg/75">
-            {nav.links.map((l, i) => (
-              <a
-                key={l.label}
-                href={l.href}
+            {dict.nav.links.map((l, i) => (
+              <Link
+                key={l.href}
+                href={localeHref(locale, l.href)}
                 className={`transition-colors duration-200 hover:text-fg ${i === 0 ? 'text-fg' : ''}`}
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
           </div>
 
           <div className="hidden md:flex items-center gap-2">
             <button
               onClick={toggleTheme}
-              aria-label="Toggle theme"
+              aria-label={dict.a11y.toggleTheme}
               className="flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-line/5 hover:text-fg"
             >
               {dark ? <SunIcon /> : <MoonIcon />}
             </button>
 
-            <button
-              onClick={() => setLang(lang === 'EN' ? 'ZH' : 'EN')}
-              className="h-9 rounded-full border border-line/15 px-3.5 text-[0.8125rem] font-medium text-muted transition-colors hover:border-line/35 hover:text-fg"
+            <Link
+              href={switchHref}
+              hrefLang={otherLocale}
+              aria-label={dict.a11y.toggleLang}
+              className="flex h-9 items-center rounded-full border border-line/15 px-3.5 text-[0.8125rem] font-medium text-muted transition-colors hover:border-line/35 hover:text-fg"
             >
-              {lang}
-            </button>
+              {LOCALE_LABEL[otherLocale]}
+            </Link>
 
-            <a
-              href={nav.login.href}
+            <Link
+              href={localeHref(locale, dict.nav.login.href)}
               className="ml-1 px-3 text-[0.9375rem] text-muted transition-colors hover:text-fg"
             >
-              {nav.login.label}
-            </a>
+              {dict.nav.login.label}
+            </Link>
 
-            <a href={nav.signup.href} className="pill-solid !py-[0.6875rem] !px-6 !text-[0.875rem]">
-              {nav.signup.label}
+            <Link
+              href={localeHref(locale, dict.nav.signup.href)}
+              className="pill-solid !py-[0.6875rem] !px-6 !text-[0.875rem]"
+            >
+              {dict.nav.signup.label}
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </a>
+            </Link>
           </div>
 
           <div className="flex md:hidden items-center gap-1">
+            <Link
+              href={switchHref}
+              hrefLang={otherLocale}
+              aria-label={dict.a11y.toggleLang}
+              className="flex h-9 items-center rounded-full border border-line/15 px-3 text-[0.8125rem] font-medium text-muted"
+            >
+              {LOCALE_LABEL[otherLocale]}
+            </Link>
             <button
               onClick={toggleTheme}
-              aria-label="Toggle theme"
+              aria-label={dict.a11y.toggleTheme}
               className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:text-fg"
             >
               {dark ? <SunIcon /> : <MoonIcon />}
             </button>
             <button
               onClick={() => setOpen(!open)}
-              aria-label="Menu"
+              aria-label={dict.a11y.menu}
+              aria-expanded={open}
               className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:text-fg"
             >
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -139,22 +161,22 @@ export function Navbar() {
         }`}
       >
         <div className="space-y-1 px-6 py-4">
-          {nav.links.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
+          {dict.nav.links.map((l) => (
+            <Link
+              key={l.href}
+              href={localeHref(locale, l.href)}
               className="block rounded-full px-4 py-2.5 text-[0.9375rem] text-muted transition-colors hover:bg-line/5 hover:text-fg"
             >
               {l.label}
-            </a>
+            </Link>
           ))}
           <div className="flex gap-3 pt-3">
-            <a href={nav.login.href} className="pill-ghost flex-1">
-              {nav.login.label}
-            </a>
-            <a href={nav.signup.href} className="pill-solid flex-1">
-              {nav.signup.label}
-            </a>
+            <Link href={localeHref(locale, dict.nav.login.href)} className="pill-ghost flex-1">
+              {dict.nav.login.label}
+            </Link>
+            <Link href={localeHref(locale, dict.nav.signup.href)} className="pill-solid flex-1">
+              {dict.nav.signup.label}
+            </Link>
           </div>
         </div>
       </div>

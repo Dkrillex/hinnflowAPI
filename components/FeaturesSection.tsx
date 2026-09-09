@@ -2,7 +2,7 @@
 
 import { Reveal } from './motion'
 import { Em, Eyebrow, SectionTitle } from './SectionHeading'
-import { features } from '@/lib/site'
+import { useI18n } from '@/lib/i18n/context'
 
 function FeatureIcon({ kind }: { kind: string }) {
   const c = {
@@ -59,6 +59,9 @@ function FeatureIcon({ kind }: { kind: string }) {
 }
 
 export function FeaturesSection() {
+  const { dict } = useI18n()
+  const features = dict.features
+
   return (
     <section className="relative py-24 md:py-32">
       <div className="mx-auto w-full max-w-7xl px-6 lg:px-10">

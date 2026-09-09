@@ -49,8 +49,8 @@ const config: Config = {
           '"Microsoft YaHei"',
           'sans-serif',
         ],
-        // 唯一的 webfont：强调词的衬线斜体
-        serif: ['var(--font-serif)', 'Georgia', 'serif'],
+        // 唯一的 webfont：强调词的衬线斜体。汉字回落宋体，与 www.hinnflow.com 一致
+        serif: ['var(--font-serif)', 'Songti SC', 'STSong', 'Noto Serif SC', 'Georgia', 'serif'],
       },
       // 发丝描边用的中间档透明度，默认 opacity 表里没有
       opacity: {

@@ -121,6 +121,11 @@
     @apply text-eyebrow font-medium uppercase text-accent;
   }
 
+  /* 衬线强调片段。中文分支见下方 :lang(zh) */
+  .serif-em {
+    @apply font-serif font-normal italic;
+  }
+
   /* 药丸按钮。尺寸取自 canvas 的 .jc-btn：999px 圆角、15px 字号、34px 横向内边距 */
   .pill {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-[2.125rem] py-[0.9375rem] text-[0.9375rem] font-medium leading-none transition-all duration-200 ease-flow hover:-translate-y-px;
@@ -142,6 +147,21 @@
   .card {
     @apply rounded-card border border-line/12 bg-surface/70 backdrop-blur-xl transition-colors duration-300 ease-flow;
   }
+}
+
+/*
+ * 中文排版分支。两条都不该用 JS 判断语种，:lang() 跟着 <html lang> 走即可。
+ *   1. eyebrow 的全大写会把 hinnflowAI 变成 HINNFLOWAI，0.32em 字距用在汉字上也过宽
+ *   2. Instrument Serif 没有汉字，中文走合成斜体会糊；改用宋体且不倾斜，
+ *      这也是 www.hinnflow.com 的做法（衬线换字体、不靠倾斜来强调）
+ */
+:lang(zh) .eyebrow {
+  text-transform: none;
+  letter-spacing: 0.12em;
+}
+
+:lang(zh) .serif-em {
+  font-style: normal;
 }
 
 .flow-banner {

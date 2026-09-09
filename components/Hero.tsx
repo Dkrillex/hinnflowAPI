@@ -1,8 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import { CountUp, Reveal } from './motion'
 import { NodeLattice } from './NodeLattice'
-import { hero, nav } from '@/lib/site'
+import { useI18n, localeHref } from '@/lib/i18n/context'
 
 function SparkIcon() {
   return (
@@ -13,6 +14,9 @@ function SparkIcon() {
 }
 
 export function Hero() {
+  const { locale, dict } = useI18n()
+  const hero = dict.hero
+
   return (
     <section className="relative flex min-h-screen flex-col justify-center overflow-hidden pt-32 pb-20">
       <div className="mx-auto w-full max-w-7xl px-6 lg:px-10">
@@ -30,7 +34,7 @@ export function Hero() {
             <h1 className="mt-8 text-[2.75rem] md:text-[4rem] lg:text-[4.5rem] font-medium leading-[1.06] tracking-[-0.02em] text-fg">
               {hero.title}
               {/* 副标题用衬线斜体，对应 www.hinnflow.com 首屏里那个斜体强调 */}
-              <span className="mt-3 block font-serif text-[0.92em] font-normal italic leading-[1.14] text-muted">
+              <span className="serif-em mt-3 block text-[0.92em] leading-[1.14] text-muted">
                 {hero.subtitle}
               </span>
             </h1>
@@ -55,15 +59,15 @@ export function Hero() {
 
           <Reveal delay={240}>
             <div className="mt-14 flex flex-wrap items-center gap-3.5">
-              <a href={hero.cta.href} className="pill-solid">
-                {hero.cta.label}
+              <Link href={localeHref(locale, hero.primary.href)} className="pill-solid">
+                {hero.primary.label}
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
                   <path d="M4 12h15m0 0-6-6m6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </a>
-              <a href={nav.links[3].href} className="pill-ghost">
-                {nav.links[3].label}
-              </a>
+              </Link>
+              <Link href={localeHref(locale, hero.secondary.href)} className="pill-ghost">
+                {hero.secondary.label}
+              </Link>
             </div>
           </Reveal>
           </div>

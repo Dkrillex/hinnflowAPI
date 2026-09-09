@@ -1,10 +1,14 @@
 'use client'
 
 import { Reveal } from './motion'
+import Link from 'next/link'
 import { Em, Eyebrow, SectionTitle } from './SectionHeading'
-import { pricing } from '@/lib/site'
+import { useI18n, localeHref } from '@/lib/i18n/context'
 
 export function PricingSection() {
+  const { locale, dict } = useI18n()
+  const pricing = dict.pricing
+
   return (
     <section className="relative py-24 md:py-32">
       <div className="mx-auto w-full max-w-7xl px-6 lg:px-10">
@@ -25,7 +29,7 @@ export function PricingSection() {
               >
                 {plan.recommended && (
                   <span className="absolute right-6 top-6 rounded-full border border-flow/30 bg-flow/10 px-3 py-1 text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-flow">
-                    Recommended
+                    {pricing.recommended}
                   </span>
                 )}
 
@@ -61,15 +65,15 @@ export function PricingSection() {
                   ))}
                 </ul>
 
-                <a
-                  href={plan.cta.href}
+                <Link
+                  href={localeHref(locale, plan.cta.href)}
                   className={`mt-9 w-full ${plan.recommended ? 'pill-flow' : 'pill-ghost'}`}
                 >
                   {plan.cta.label}
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path d="M4 12h15m0 0-6-6m6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </a>
+                </Link>
               </div>
             </Reveal>
           ))}

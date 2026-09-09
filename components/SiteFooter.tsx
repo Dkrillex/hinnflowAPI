@@ -1,11 +1,16 @@
 'use client'
 
+import Link from 'next/link'
 import { LogoMark } from './Logo'
 import { Em } from './SectionHeading'
 import { Reveal } from './motion'
-import { brand, footer } from '@/lib/site'
+import { useI18n, localeHref } from '@/lib/i18n/context'
+import { brand } from '@/lib/site'
 
 export function SiteFooter() {
+  const { locale, dict } = useI18n()
+  const footer = dict.footer
+
   return (
     <footer className="relative pt-16">
       <div className="mx-auto w-full max-w-7xl px-6 lg:px-10">
@@ -31,7 +36,7 @@ export function SiteFooter() {
                 <span className="font-serif italic">{brand.nameAccent}</span>
               </span>
             </div>
-            <p className="mt-4 max-w-[18rem] text-[0.875rem] leading-relaxed text-muted">{brand.tagline}</p>
+            <p className="mt-4 max-w-[18rem] text-[0.875rem] leading-relaxed text-muted">{footer.tagline}</p>
             <a
               href={`mailto:${brand.email}`}
               className="mt-4 inline-block text-[0.875rem] text-flow transition-opacity hover:opacity-75"
@@ -45,13 +50,13 @@ export function SiteFooter() {
               <h4 className="text-eyebrow font-medium uppercase text-muted">{col.title}</h4>
               <ul className="mt-6 space-y-3.5">
                 {col.links.map((l) => (
-                  <li key={l.label}>
-                    <a
-                      href={l.href}
+                  <li key={l.href}>
+                    <Link
+                      href={localeHref(locale, l.href)}
                       className="text-[0.875rem] text-muted transition-colors hover:text-fg"
                     >
                       {l.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -68,7 +73,7 @@ export function SiteFooter() {
             </p>
           </Reveal>
           <p className="mt-10 pb-12 text-[0.8125rem] text-muted">
-            {brand.year} © {brand.name}. All rights reserved · {brand.email}
+            {brand.year} © {brand.name}. {footer.rights} · {brand.email}
           </p>
         </div>
       </div>
