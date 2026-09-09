@@ -9,25 +9,25 @@
  * 语义变量存 RGB 三元组，好让 Tailwind 的 <alpha-value> 生效。
  */
 :root {
-  --bg: 244 245 247;
+  --bg: 242 245 250;
   --surface: 255 255 255;
-  --fg: 12 12 14;
-  --muted: 92 96 104;
-  --line: 12 12 14;
-  /* 品牌青 #05AFFE 压在浅底上只有 2.45:1，小字标签换成同族深一档的 #0369A1 */
-  --accent-text: 3 105 161;
+  --fg: 12 13 16;
+  --muted: 90 96 108;
+  --line: 12 13 16;
+  /* 主色 #1668FF 压在浅底上只有 3.7:1，小字标签换成同族深两档的 #0838A6 */
+  --accent-text: 8 56 166;
   color-scheme: light;
 }
 
 .dark {
-  --bg: 14 16 20;
-  --surface: 18 20 25;
+  --bg: 11 15 24;
+  --surface: 15 19 30;
   --fg: 255 255 255;
   /* 正文灰要压得住洋流最亮处，实测把这个值定在 178 才有 4.5:1 余量 */
   --muted: 178 182 191;
   --line: 255 255 255;
-  /* 同理，深色下小字标签用 www 调色板里更亮的 #7DD3FC，5.9:1 */
-  --accent-text: 125 211 252;
+  /* 深色下小字标签比主色亮两档到 #93BEFF：flow-300 实测只有 4.49:1，差一点 */
+  --accent-text: 147 190 255;
   color-scheme: dark;
 }
 
@@ -43,7 +43,7 @@
   }
 
   ::selection {
-    background: #05affe;
+    background: #1668ff;
     color: #fff;
   }
 }
@@ -135,7 +135,7 @@
   }
 
   .pill-flow {
-    @apply pill bg-flow text-white hover:bg-[#0496db];
+    @apply pill bg-flow text-white hover:bg-flow-600;
   }
 
   /* 发丝描边卡片：两站卡片圆角都是 20px，且都不用投影 */
@@ -146,8 +146,8 @@
 
 .flow-banner {
   background-image:
-    radial-gradient(32rem 20rem at 82% 16%, rgb(125 211 252 / 0.45) 0%, transparent 64%),
-    linear-gradient(104deg, #0544e9 0%, #0570f0 46%, #05affe 100%);
+    radial-gradient(32rem 20rem at 82% 16%, rgb(127 178 255 / 0.42) 0%, transparent 64%),
+    linear-gradient(104deg, #0838a6 0%, #0b4ed9 46%, #1668ff 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {

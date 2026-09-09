@@ -15,10 +15,12 @@ const MeshGradient = lazy(() =>
   import('@paper-design/shaders-react').then((m) => ({ default: m.MeshGradient }))
 )
 
-const LIGHT_A = ['#F3F4F6', '#9DA6B5', '#5C6880', '#F3F4F6', '#DCE0E6', '#FFFFFF']
-const LIGHT_B = ['#FFFFFF', '#7A8698', '#EEF1F4', '#FFFFFF']
-const DARK_A = ['#0E1014', '#2A303A', '#8A93A2', '#0E1014', '#4A5160', '#D8DCE3']
-const DARK_B = ['#0E1014', '#C5CBD4', '#9AA3B0', '#0E1014']
+// 沿用希流的明暗构成，整体往科技蓝偏一档；亮度刻意保持不变，
+// 否则薄纱那套实测出来的对比度数值就要重算
+const LIGHT_A = ['#F2F5FA', '#97A5BF', '#54648A', '#F2F5FA', '#DAE1EE', '#FFFFFF']
+const LIGHT_B = ['#FFFFFF', '#7385A6', '#ECF0F7', '#FFFFFF']
+const DARK_A = ['#0B0F18', '#232C42', '#7C8CB2', '#0B0F18', '#414C6B', '#D2D9EA']
+const DARK_B = ['#0B0F18', '#BFC8DC', '#93A0BC', '#0B0F18']
 
 const MAX_PIXELS = 1_440_000
 
