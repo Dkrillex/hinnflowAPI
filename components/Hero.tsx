@@ -39,11 +39,13 @@ export function Hero() {
           </Reveal>
 
           <Reveal delay={160}>
-            <div className="mt-14 flex flex-wrap items-stretch gap-x-14 gap-y-8">
+            <div className="mt-14 flex flex-wrap items-stretch gap-x-10 gap-y-8 md:gap-x-14">
               {hero.stats.map((s, i) => (
                 <div
                   key={s.label}
-                  className={i > 0 ? 'border-l border-line/12 pl-14 -ml-14 md:ml-0 md:pl-14' : ''}
+                  // 分隔线只在 md+ 出现：窄屏会换行，此前的 -ml-14 让换行后的
+                  // 第三项左边缘跑到视口外 32px，分隔线直接被 overflow-hidden 裁掉
+                  className={i > 0 ? 'md:border-l md:border-line/12 md:pl-14' : ''}
                 >
                   <div className="text-[2.25rem] font-medium leading-none tracking-[-0.02em] text-fg">
                     <CountUp value={s.value} decimals={s.decimals} suffix={s.suffix} />

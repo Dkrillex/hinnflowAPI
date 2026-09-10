@@ -53,7 +53,8 @@ export function ModelsSection() {
         </Reveal>
 
         <div className="mt-16 grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
-          {/* 左：三条说明，鼠标经过切换高亮 */}
+          {/* 左：三条说明。高亮纯属装饰——三条文字本身都达标可读，
+              所以不把它们做成按钮去换取一个装饰效果，只在鼠标经过时增强 */}
           <div className="lg:col-span-5">
             {models.items.map((item, i) => {
               const on = active === i
@@ -73,9 +74,14 @@ export function ModelsSection() {
                       />
                       <span className="label">{item.title}</span>
                     </div>
+                    {/*
+                      未激活态不能再压暗：text-muted/55 实测只有 3.15:1，而三条里
+                      永远有两条处于该状态。改用 text-muted（4.5:1 安全档），
+                      激活态仍是 text-fg，层次照样拉得开。
+                    */}
                     <p
                       className={`mt-3 text-[1.375rem] leading-[1.5] tracking-[-0.01em] transition-colors duration-300 ${
-                        on ? 'text-fg' : 'text-muted/55'
+                        on ? 'text-fg' : 'text-muted'
                       }`}
                     >
                       {item.desc}
