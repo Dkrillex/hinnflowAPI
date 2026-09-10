@@ -89,7 +89,8 @@ export function ModelsSection() {
           {/* 右：模型矩阵 */}
           <Reveal delay={140} className="lg:col-span-7">
             <div className="card overflow-hidden p-8 md:p-10">
-              <div className="grid grid-cols-3 gap-5">
+              {/* 窄屏必须退成单列：三列时每格只剩 79px，"Claude Fable 5.1" 这类长名会撑破药丸 */}
+              <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-5">
                 {models.columns.map((col, i) => (
                   <div key={col.vendor} className="flex flex-col items-center gap-4">
                     <div className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-2xl border border-line/12 bg-line/[0.04] text-flow">
@@ -100,7 +101,7 @@ export function ModelsSection() {
                       {col.tags.map((t) => (
                         <div
                           key={t}
-                          className="flex h-10 items-center justify-center rounded-full border border-line/12 bg-line/[0.03] text-[0.8125rem] text-muted transition-colors duration-200 hover:border-flow/40 hover:text-fg"
+                          className="flex min-h-10 items-center justify-center rounded-full border border-line/12 bg-line/[0.03] px-3 py-2 text-center text-[0.8125rem] leading-tight text-muted transition-colors duration-200 hover:border-flow/40 hover:text-fg"
                         >
                           {t}
                         </div>
