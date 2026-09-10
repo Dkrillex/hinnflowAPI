@@ -11,3 +11,7 @@ yarn-error.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# 本地调试产物（CDP 截图等），不要进仓库
+*.png
+!public/**/*.png
