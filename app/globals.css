@@ -70,26 +70,32 @@
   opacity: 0.5;
 }
 
-/* WebGL 不可用时的静态兜底，构图与着色器版本对齐 */
+/*
+ * WebGL 不可用时的静态兜底，构图与着色器版本对齐。
+ * 色相跟着 MeshGradient 一起偏了科技蓝，收口色直接用 --bg，
+ * 否则不支持 WebGL 的设备会看到背景与页面底色接不上的色差。
+ */
 .flow-fallback {
   background:
-    radial-gradient(60% 50% at 18% 28%, rgba(139, 148, 163, 0.45), transparent 70%),
+    radial-gradient(60% 50% at 18% 28%, rgba(151, 165, 191, 0.45), transparent 70%),
     radial-gradient(50% 45% at 82% 22%, rgba(255, 255, 255, 0.7), transparent 70%),
-    radial-gradient(55% 50% at 68% 82%, rgba(197, 203, 212, 0.65), transparent 72%), #f4f5f7;
+    radial-gradient(55% 50% at 68% 82%, rgba(218, 225, 238, 0.65), transparent 72%),
+    rgb(var(--bg));
 }
 
 .dark .flow-fallback {
   background:
-    radial-gradient(60% 50% at 18% 28%, rgba(44, 49, 58, 0.7), transparent 70%),
-    radial-gradient(50% 45% at 82% 22%, rgba(212, 216, 224, 0.28), transparent 70%),
-    radial-gradient(55% 50% at 68% 82%, rgba(16, 18, 22, 0.85), transparent 72%), #101216;
+    radial-gradient(60% 50% at 18% 28%, rgba(35, 44, 66, 0.7), transparent 70%),
+    radial-gradient(50% 45% at 82% 22%, rgba(210, 217, 234, 0.28), transparent 70%),
+    radial-gradient(55% 50% at 68% 82%, rgba(11, 15, 24, 0.85), transparent 72%),
+    rgb(var(--bg));
 }
 
-/* 压在洋流之上的一层薄纱：让正文始终有足够对比度，同时保留流动感 */
 /*
- * 薄纱不是固定层，而是随内容滚动的整页渐变：首屏薄（洋流看得清，那里只有大字白标题），
- * 往下逐渐加厚到正文安全线。数值是实测出来的——洋流最亮处约 #AAB0BA，
- * 0.52 时白色标题 5.7:1，0.66 时正文灰 4.87:1，都过 4.5:1。
+ * 压在洋流之上的薄纱。它不是固定层，而是随内容滚动的整页渐变：首屏薄
+ * （那里只有大字白标题，洋流看得最清），往下加厚到正文安全线。
+ * 数值是实测出来的——洋流最亮处约 #AAB0BA，深色下首屏 0.58、正文区 0.66 时，
+ * 最坏背景处正文灰 4.7:1、白色标题 9.6:1，都过 4.5:1。改动后需重测。
  */
 .flow-scrim {
   pointer-events: none;
@@ -116,8 +122,7 @@
 }
 
 @layer components {
-  /* 全大写小标签：11px + 0.32em 字距 + 强调色，两站通用的分区标记 */
-  /* 分区标记：强调色 */
+  /* 分区标记：11px + 0.32em 字距 + 全大写，强调色 */
   .eyebrow {
     @apply text-eyebrow font-medium uppercase text-accent;
   }
@@ -178,6 +183,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {

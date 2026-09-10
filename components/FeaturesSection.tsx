@@ -88,9 +88,7 @@ export function FeaturesSection() {
                   <div className="flex h-10 w-10 items-center justify-center rounded-tile border border-flow/25 bg-flow/10 text-flow">
                     <FeatureIcon kind={card.icon} />
                   </div>
-                  <span className="text-eyebrow font-medium uppercase text-flow">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
+                  <span className="eyebrow !text-flow">{String(i + 1).padStart(2, '0')}</span>
                 </div>
 
                 <h3 className="mt-7 text-[1.25rem] font-medium tracking-[-0.01em] text-fg">{card.title}</h3>
