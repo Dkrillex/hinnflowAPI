@@ -27,7 +27,7 @@ const en = {
     signup: { label: 'Sign Up', href: '/register' },
   },
   hero: {
-    badge: 'GPT-5 Integrated!',
+    badge: 'GPT-6 Astra Integrated!',
     title: 'One-stop AI Model Interface Service',
     subtitle: 'Official API, Stable & Reliable, Ready to Use',
     stats: [
@@ -46,11 +46,11 @@ const en = {
     items: [
       {
         title: 'Global Models',
-        desc: 'Leading AI models including GPT-4, Claude 3.5, Gemini 1.5 Pro, and more.',
+        desc: 'Frontier models including GPT-6 Astra, Claude Fable 5.1, and Gemini 3.8 Flash.',
       },
       {
         title: 'Local Models',
-        desc: 'Optimized local models like Tongyi Qianwen, Ernie Bot, ChatGLM.',
+        desc: 'China-hosted models like Qwen3-Max, DeepSeek V4, GLM-5 and Kimi K2.',
       },
       {
         title: 'Multimodal',
@@ -58,9 +58,9 @@ const en = {
       },
     ],
     columns: [
-      { vendor: 'OpenAI', label: 'ChatGPT', tags: ['GPT-5', 'GPT-4.1', 'GPT-4o'] },
-      { vendor: 'Claude', label: 'Claude', tags: ['Claude 4.1', 'Claude 4'] },
-      { vendor: 'Gemini', label: 'Gemini', tags: ['Gemini Pro'] },
+      { vendor: 'OpenAI', label: 'ChatGPT', tags: ['GPT-6 Astra', 'GPT-5.6 Luna', 'GPT-5.6 Terra'] },
+      { vendor: 'Claude', label: 'Claude', tags: ['Claude Fable 5.1', 'Claude Mythos 5.1', 'Claude Opus 5'] },
+      { vendor: 'Gemini', label: 'Gemini', tags: ['Gemini 3.8 Flash', 'Gemini Omni 1.1'] },
     ],
   },
   features: {
@@ -223,7 +223,7 @@ const zh: Dict = {
     signup: { label: '注册', href: '/register' },
   },
   hero: {
-    badge: '已接入 GPT-5！',
+    badge: '已接入 GPT-6 Astra！',
     title: '一站式 AI 大模型接口服务',
     subtitle: '官方直连，稳定可靠，开箱即用',
     stats: [
@@ -242,11 +242,11 @@ const zh: Dict = {
     items: [
       {
         title: '海外模型',
-        desc: 'GPT-4、Claude 3.5、Gemini 1.5 Pro 等一线模型官方直连，版本跟随上游同步。',
+        desc: 'GPT-6 Astra、Claude Fable 5.1、Gemini 3.8 Flash 等前沿模型官方直连，版本跟随上游同步。',
       },
       {
         title: '国内模型',
-        desc: '通义千问、文心一言、智谱 GLM 等国内模型就近接入，低延迟、可合规。',
+        desc: '通义千问 Qwen3-Max、DeepSeek V4、智谱 GLM-5、Kimi K2 就近接入，低延迟、可合规。',
       },
       {
         title: '多模态',
@@ -254,9 +254,9 @@ const zh: Dict = {
       },
     ],
     columns: [
-      { vendor: 'OpenAI', label: 'ChatGPT', tags: ['GPT-5', 'GPT-4.1', 'GPT-4o'] },
-      { vendor: 'Claude', label: 'Claude', tags: ['Claude 4.1', 'Claude 4'] },
-      { vendor: 'Gemini', label: 'Gemini', tags: ['Gemini Pro'] },
+      { vendor: 'OpenAI', label: 'ChatGPT', tags: ['GPT-6 Astra', 'GPT-5.6 Luna', 'GPT-5.6 Terra'] },
+      { vendor: 'Claude', label: 'Claude', tags: ['Claude Fable 5.1', 'Claude Mythos 5.1', 'Claude Opus 5'] },
+      { vendor: 'Gemini', label: 'Gemini', tags: ['Gemini 3.8 Flash', 'Gemini Omni 1.1'] },
     ],
   },
   features: {
