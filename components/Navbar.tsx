@@ -140,6 +140,7 @@ export function Navbar() {
               onClick={() => setOpen(!open)}
               aria-label={dict.a11y.menu}
               aria-expanded={open}
+              aria-controls="mobile-nav"
               className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:text-fg"
             >
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -154,10 +155,15 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* 移动端抽屉 */}
+      {/*
+        移动端抽屉。关闭态必须带 invisible：max-h-0 + opacity-0 都不会把元素移出
+        tab 顺序，否则键盘用户会连续聚焦到 6 个看不见的链接。
+        visibility 的过渡是离散的——展开时立刻可见，收起时等动画结束才隐藏，正好合用。
+      */}
       <div
+        id="mobile-nav"
         className={`md:hidden overflow-hidden border-t border-line/10 bg-bg/90 backdrop-blur-xl transition-all duration-300 ease-flow ${
-          open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          open ? 'visible max-h-96 opacity-100' : 'invisible max-h-0 opacity-0'
         }`}
       >
         <div className="space-y-1 px-6 py-4">
@@ -165,16 +171,25 @@ export function Navbar() {
             <Link
               key={l.href}
               href={localeHref(locale, l.href)}
+              onClick={() => setOpen(false)}
               className="block rounded-full px-4 py-2.5 text-[0.9375rem] text-muted transition-colors hover:bg-line/5 hover:text-fg"
             >
               {l.label}
             </Link>
           ))}
           <div className="flex gap-3 pt-3">
-            <Link href={localeHref(locale, dict.nav.login.href)} className="pill-ghost flex-1">
+            <Link
+              href={localeHref(locale, dict.nav.login.href)}
+              onClick={() => setOpen(false)}
+              className="pill-ghost flex-1"
+            >
               {dict.nav.login.label}
             </Link>
-            <Link href={localeHref(locale, dict.nav.signup.href)} className="pill-solid flex-1">
+            <Link
+              href={localeHref(locale, dict.nav.signup.href)}
+              onClick={() => setOpen(false)}
+              className="pill-solid flex-1"
+            >
               {dict.nav.signup.label}
             </Link>
           </div>
