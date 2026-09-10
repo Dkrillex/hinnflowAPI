@@ -64,7 +64,8 @@ const en = {
     ],
   },
   features: {
-    eyebrow: 'Why Choose hinnflowAI',
+    // 品牌名单独拆出：eyebrow 整体走全大写，直接拼进去会变成 HINNFLOWAI
+    eyebrowLead: 'Why Choose ',
     headingParts: [
       { text: 'Professional', accent: true },
       { text: '、', accent: false },
@@ -259,7 +260,7 @@ const zh: Dict = {
     ],
   },
   features: {
-    eyebrow: '为什么选择 hinnflowAI',
+    eyebrowLead: '为什么选择 ',
     headingParts: [
       { text: '专业', accent: true },
       { text: '、', accent: false },

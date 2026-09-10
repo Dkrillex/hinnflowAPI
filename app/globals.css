@@ -117,8 +117,14 @@
 
 @layer components {
   /* 全大写小标签：11px + 0.32em 字距 + 强调色，两站通用的分区标记 */
+  /* 分区标记：强调色 */
   .eyebrow {
     @apply text-eyebrow font-medium uppercase text-accent;
+  }
+
+  /* 次级小标签：同样的字号字距，但走正文灰（卡片标题、页脚栏目、套餐名） */
+  .label {
+    @apply text-eyebrow font-medium uppercase text-muted;
   }
 
   /* 衬线强调片段。中文分支见下方 :lang(zh) */
@@ -155,7 +161,8 @@
  *   2. Instrument Serif 没有汉字，中文走合成斜体会糊；改用宋体且不倾斜，
  *      这也是 www.hinnflow.com 的做法（衬线换字体、不靠倾斜来强调）
  */
-:lang(zh) .eyebrow {
+:lang(zh) .eyebrow,
+:lang(zh) .label {
   text-transform: none;
   letter-spacing: 0.12em;
 }

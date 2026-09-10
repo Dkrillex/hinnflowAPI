@@ -3,6 +3,7 @@
 import { Reveal } from './motion'
 import { Em, Eyebrow, SectionTitle } from './SectionHeading'
 import { useI18n } from '@/lib/i18n/context'
+import { brand } from '@/lib/site'
 
 function FeatureIcon({ kind }: { kind: string }) {
   const c = {
@@ -66,7 +67,11 @@ export function FeaturesSection() {
     <section className="relative py-24 md:py-32">
       <div className="mx-auto w-full max-w-7xl px-6 lg:px-10">
         <Reveal>
-          <Eyebrow>{features.eyebrow}</Eyebrow>
+          <Eyebrow>
+            {features.eyebrowLead}
+            {/* 品牌名不参与全大写，否则显示成 HINNFLOWAI */}
+            <span className="normal-case">{brand.name}</span>
+          </Eyebrow>
           <SectionTitle className="mt-6 max-w-4xl">
             {features.headingParts.map((p, i) =>
               p.accent ? <Em key={i}>{p.text}</Em> : <span key={i}>{p.text}</span>

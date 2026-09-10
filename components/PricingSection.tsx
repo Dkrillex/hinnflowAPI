@@ -33,7 +33,7 @@ export function PricingSection() {
                   </span>
                 )}
 
-                <span className="text-eyebrow font-medium uppercase text-muted">{plan.name}</span>
+                <span className="label">{plan.name}</span>
 
                 <div className="mt-7 flex items-end gap-1">
                   {plan.currency && (

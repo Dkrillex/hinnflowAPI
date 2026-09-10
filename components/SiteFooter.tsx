@@ -47,7 +47,7 @@ export function SiteFooter() {
 
           {footer.columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-eyebrow font-medium uppercase text-muted">{col.title}</h4>
+              <h4 className="label">{col.title}</h4>
               <ul className="mt-6 space-y-3.5">
                 {col.links.map((l) => (
                   <li key={l.href}>

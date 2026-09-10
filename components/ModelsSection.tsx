@@ -19,15 +19,11 @@ function VendorGlyph({ kind }: { kind: number }) {
       <svg viewBox="0 0 32 32" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
         {Array.from({ length: 12 }).map((_, i) => {
           const a = (i * Math.PI) / 6
-          return (
-            <line
-              key={i}
-              x1={16 + Math.cos(a) * 3.5}
-              y1={16 + Math.sin(a) * 3.5}
-              x2={16 + Math.cos(a) * 10.5}
-              y2={16 + Math.sin(a) * 10.5}
-            />
-          )
+          // 必须定精度：三角函数的末位在 Node 与浏览器 V8 上序列化结果不同
+          // （6.906733260263396 vs 6.9067332602633975），会触发 hydration 不匹配
+          const r = (len: number) => (16 + Math.cos(a) * len).toFixed(3)
+          const s = (len: number) => (16 + Math.sin(a) * len).toFixed(3)
+          return <line key={i} x1={r(3.5)} y1={s(3.5)} x2={r(10.5)} y2={s(10.5)} />
         })}
       </svg>
     )
@@ -75,7 +71,7 @@ export function ModelsSection() {
                           on ? 'bg-flow' : 'bg-muted/40'
                         }`}
                       />
-                      <span className="text-eyebrow font-medium uppercase text-muted">{item.title}</span>
+                      <span className="label">{item.title}</span>
                     </div>
                     <p
                       className={`mt-3 text-[1.375rem] leading-[1.5] tracking-[-0.01em] transition-colors duration-300 ${
