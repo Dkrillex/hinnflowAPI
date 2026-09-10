@@ -32,7 +32,12 @@ export function middleware(request: NextRequest) {
   const locale = pickLocale(request.headers.get('accept-language'))
   const url = request.nextUrl.clone()
   url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`
-  return NextResponse.redirect(url)
+
+  const res = NextResponse.redirect(url)
+  // 这条重定向的结果取决于 Accept-Language。不声明 Vary，CDN 会把某一个访客的
+  // 语种重定向缓存下来发给所有人。
+  res.headers.set('Vary', 'Accept-Language')
+  return res
 }
 
 export const config = {

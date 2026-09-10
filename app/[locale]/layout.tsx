@@ -19,18 +19,33 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }))
 }
 
+/**
+ * canonical 与 hreflang 必须是绝对地址，Google 会直接忽略相对的 hreflang。
+ * 没有 metadataBase 时 Next 会把 `/en` 原样输出，等于这两个标签白写。
+ * 部署时用 NEXT_PUBLIC_SITE_URL 覆盖。
+ */
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hinnflow.com'
+
+const HREFLANG: Record<string, string> = { en: 'en', zh: 'zh-CN' }
+
 export async function generateMetadata({
   params,
 }: {
   params: { locale: string }
 }): Promise<Metadata> {
-  const dict = getDict(isLocale(params.locale) ? params.locale : 'en')
+  const locale = isLocale(params.locale) ? params.locale : 'en'
+  const dict = getDict(locale)
   return {
+    metadataBase: new URL(SITE_URL),
     title: dict.meta.title,
     description: dict.meta.description,
     alternates: {
-      canonical: `/${params.locale}`,
-      languages: Object.fromEntries(LOCALES.map((l) => [l === 'zh' ? 'zh-CN' : 'en', `/${l}`])),
+      canonical: `/${locale}`,
+      languages: {
+        ...Object.fromEntries(LOCALES.map((l) => [HREFLANG[l], `/${l}`])),
+        // 语种不匹配时的落点，与 middleware 的默认语种保持一致
+        'x-default': '/en',
+      },
     },
   }
 }
