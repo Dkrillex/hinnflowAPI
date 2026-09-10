@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { CountUp, Reveal } from './motion'
-import { NodeLattice } from './NodeLattice'
 import { useI18n, localeHref } from '@/lib/i18n/context'
 
 function SparkIcon() {
@@ -20,8 +19,7 @@ export function Hero() {
   return (
     <section className="relative flex min-h-screen flex-col justify-center overflow-hidden pt-32 pb-20">
       <div className="mx-auto w-full max-w-7xl px-6 lg:px-10">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:gap-6">
-          <div>
+        <div className="max-w-4xl">
           <Reveal>
             {/* 首屏薄纱较薄，胶囊自带一层不透明底才压得住洋流最亮处 */}
             <span className="inline-flex items-center gap-2 rounded-full border border-flow/30 bg-bg/70 px-3.5 py-1.5 text-[0.8125rem] font-medium text-flow backdrop-blur-md">
@@ -69,12 +67,6 @@ export function Hero() {
                 {hero.secondary.label}
               </Link>
             </div>
-          </Reveal>
-          </div>
-
-          {/* 右侧节点点阵。小屏放在文案下方并压低高度，避免挤掉首屏行动号召 */}
-          <Reveal delay={320}>
-            <NodeLattice className="h-[22rem] w-full sm:h-[26rem] lg:h-[34rem]" />
           </Reveal>
         </div>
       </div>
