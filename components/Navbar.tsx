@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { LogoLockup } from './Logo'
+import { Avatar, UserMenu, balanceText } from './auth/UserMenu'
+import { logout, useSession } from '@/lib/auth/client'
 import { useI18n, localeHref } from '@/lib/i18n/context'
 import { LOCALE_LABEL, type Locale } from '@/lib/i18n/dictionaries'
 
@@ -33,6 +35,13 @@ export function Navbar() {
   const [dark, setDark] = useState(true)
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+
+  const session = useSession()
+  // 登录态确认之前先占位不显示，避免已登录用户先看到一闪而过的"登录 / 注册"
+  const authHidden = session.status === 'unknown' ? 'invisible' : ''
+  const loginPath = localeHref(locale, dict.nav.login.href)
+  // 从哪来回哪去；已经在登录页就不再嵌套 next
+  const loginHref = pathname === loginPath ? loginPath : `${loginPath}?next=${encodeURIComponent(pathname)}`
 
   const otherLocale: Locale = locale === 'en' ? 'zh' : 'en'
   // 切语种是换路由而不是改客户端状态，两个语种都是预渲染页，不会有文案闪烁
@@ -73,15 +82,20 @@ export function Navbar() {
 
           {/* 导航浮在首屏薄纱最薄处，用 fg/75 而非 muted 才够对比度 */}
           <div className="hidden md:flex items-center gap-9 text-[0.9375rem] text-fg/75">
-            {dict.nav.links.map((l, i) => (
-              <Link
-                key={l.href}
-                href={localeHref(locale, l.href)}
-                className={`transition-colors duration-200 hover:text-fg ${i === 0 ? 'text-fg' : ''}`}
-              >
-                {l.label}
-              </Link>
-            ))}
+            {dict.nav.links.map((l) => {
+              const href = localeHref(locale, l.href)
+              const current = pathname === href
+              return (
+                <Link
+                  key={l.href}
+                  href={href}
+                  aria-current={current ? 'page' : undefined}
+                  className={`transition-colors duration-200 hover:text-fg ${current ? 'text-fg' : ''}`}
+                >
+                  {l.label}
+                </Link>
+              )
+            })}
           </div>
 
           <div className="hidden md:flex items-center gap-2">
@@ -102,22 +116,28 @@ export function Navbar() {
               {LOCALE_LABEL[otherLocale]}
             </Link>
 
-            <Link
-              href={localeHref(locale, dict.nav.login.href)}
-              className="ml-1 px-3 text-[0.9375rem] text-muted transition-colors hover:text-fg"
-            >
-              {dict.nav.login.label}
-            </Link>
+            {session.status === 'authenticated' ? (
+              <UserMenu session={session} />
+            ) : (
+              <>
+                <Link
+                  href={loginHref}
+                  className={`ml-1 px-3 text-[0.9375rem] text-muted transition-colors hover:text-fg ${authHidden}`}
+                >
+                  {dict.nav.login.label}
+                </Link>
 
-            <Link
-              href={localeHref(locale, dict.nav.signup.href)}
-              className="pill-solid !py-[0.6875rem] !px-6 !text-[0.875rem]"
-            >
-              {dict.nav.signup.label}
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
+                <Link
+                  href={localeHref(locale, dict.nav.signup.href)}
+                  className={`pill-solid !py-[0.6875rem] !px-6 !text-[0.875rem] ${authHidden}`}
+                >
+                  {dict.nav.signup.label}
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+              </>
+            )}
           </div>
 
           <div className="flex md:hidden items-center gap-1">
@@ -177,22 +197,42 @@ export function Navbar() {
               {l.label}
             </Link>
           ))}
-          <div className="flex gap-3 pt-3">
-            <Link
-              href={localeHref(locale, dict.nav.login.href)}
-              onClick={() => setOpen(false)}
-              className="pill-ghost flex-1"
-            >
-              {dict.nav.login.label}
-            </Link>
-            <Link
-              href={localeHref(locale, dict.nav.signup.href)}
-              onClick={() => setOpen(false)}
-              className="pill-solid flex-1"
-            >
-              {dict.nav.signup.label}
-            </Link>
-          </div>
+          {session.status === 'authenticated' ? (
+            <div className="mt-3 border-t border-line/10 pt-4">
+              <div className="flex items-center gap-3 px-4">
+                <Avatar name={session.user.displayName} className="h-9 w-9 text-[0.875rem]" />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-[0.9375rem] font-medium text-fg">{session.user.displayName}</div>
+                  <div className="text-[0.8125rem] text-muted">
+                    {dict.auth.menu.balance} <span className="tabular-nums text-fg">{balanceText(session)}</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false)
+                  void logout()
+                }}
+                className="pill-ghost mt-4 w-full"
+              >
+                {dict.auth.menu.logout}
+              </button>
+            </div>
+          ) : (
+            <div className={`flex gap-3 pt-3 ${authHidden}`}>
+              <Link href={loginHref} onClick={() => setOpen(false)} className="pill-ghost flex-1">
+                {dict.nav.login.label}
+              </Link>
+              <Link
+                href={localeHref(locale, dict.nav.signup.href)}
+                onClick={() => setOpen(false)}
+                className="pill-solid flex-1"
+              >
+                {dict.nav.signup.label}
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </nav>
