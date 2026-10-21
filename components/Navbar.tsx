@@ -84,7 +84,8 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-9 text-[0.9375rem] text-fg/75">
             {dict.nav.links.map((l) => {
               const href = localeHref(locale, l.href)
-              const current = pathname === href
+              // 首页只认精确匹配，其余分区连同子页面都算当前（/console/keys 也高亮"控制台"）
+              const current = l.href === '/' ? pathname === href : pathname === href || pathname.startsWith(`${href}/`)
               return (
                 <Link
                   key={l.href}

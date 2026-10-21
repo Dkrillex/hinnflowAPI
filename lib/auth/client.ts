@@ -9,7 +9,7 @@ import { useSyncExternalStore } from 'react'
 import type { PublicUser } from './server'
 import type { Currency } from '@/lib/newapi/pricing'
 
-export type Wallet = { balanceUsd: number; currency: Currency }
+export type Wallet = { balanceUsd: number; quotaPerUnit: number; currency: Currency }
 
 export type Session =
   /** 服务端渲染与首帧：还不知道 */
@@ -58,6 +58,11 @@ export function setAuthenticated(user: PublicUser) {
   set({ status: 'authenticated', user })
   // 登录接口不带余额，补拉一次
   void loadSession(true)
+}
+
+/** 控制台接口发现会话已失效时调用：本地状态立即转为未登录 */
+export function markSignedOut() {
+  set({ status: 'anonymous' })
 }
 
 export async function logout() {

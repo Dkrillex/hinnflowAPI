@@ -17,14 +17,20 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { NEWAPI_BASE_URL } from '@/lib/newapi/client'
 
-/** 本站 Cookie。都只给 /api/auth 用，页面与静态资源请求不会带上 */
-const ACCESS_COOKIE = 'hf_at'
-const REFRESH_COOKIE = 'hf_rt'
+/**
+ * 本站 Cookie。只给 /api 下的路由用（/api/auth 登录态、/api/console 控制台转接），
+ * 页面与静态资源请求不会带上。
+ */
+const ACCESS_COOKIE = 'hf_access'
+const REFRESH_COOKIE = 'hf_refresh'
+/** 早期版本用过的名字与路径（只覆盖 /api/auth，控制台拿不到）。写会话时顺手清掉 */
+const LEGACY_COOKIES = ['hf_at', 'hf_rt']
+const LEGACY_PATH = '/api/auth'
 /** 脚本可读的"有会话"提示，只用来决定要不要去问 /api/auth/me，本身不代表任何权限 */
 export const HINT_COOKIE = 'hf_session'
 
 const UPSTREAM_REFRESH_COOKIE = 'new_api_refresh'
-const COOKIE_PATH = '/api/auth'
+const COOKIE_PATH = '/api'
 const secure = process.env.NODE_ENV === 'production'
 
 /** 访问令牌提前 30 秒视为过期，避免压着过期时刻发请求 */
@@ -44,7 +50,7 @@ export type UpstreamUser = {
   request_count: number
 }
 
-type AuthData = {
+export type AuthData = {
   access_token?: string
   access_expires_at?: number
   user?: UpstreamUser
@@ -74,7 +80,7 @@ function clientIp(req: NextRequest): string | undefined {
 export async function upstream<T = AuthData>(
   req: NextRequest,
   path: string,
-  opts: { method?: 'GET' | 'POST'; body?: unknown; accessToken?: string; refreshToken?: string } = {}
+  opts: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: unknown; accessToken?: string; refreshToken?: string } = {}
 ): Promise<UpstreamResult<T>> {
   const headers: Record<string, string> = {
     accept: 'application/json',
@@ -136,14 +142,20 @@ export function storeSession(res: NextResponse, data: AuthData | undefined, refr
     const ttl = data.access_expires_at - Math.floor(Date.now() / 1000) - ACCESS_SKEW_SECONDS
     if (ttl > 0) res.cookies.set(ACCESS_COOKIE, data.access_token, { ...base, maxAge: ttl })
   }
+  clearLegacy(res)
   if (refresh) {
     res.cookies.set(REFRESH_COOKIE, refresh.token, { ...base, maxAge: refresh.maxAge })
     res.cookies.set(HINT_COOKIE, '1', { secure, sameSite: 'lax', path: '/', maxAge: refresh.maxAge })
   }
 }
 
+function clearLegacy(res: NextResponse) {
+  for (const name of LEGACY_COOKIES) res.cookies.set(name, '', { ...base, path: LEGACY_PATH, maxAge: 0 })
+}
+
 export function clearSession(res: NextResponse) {
   for (const name of [ACCESS_COOKIE, REFRESH_COOKIE]) res.cookies.set(name, '', { ...base, maxAge: 0 })
+  clearLegacy(res)
   res.cookies.set(HINT_COOKIE, '', { secure, sameSite: 'lax', path: '/', maxAge: 0 })
 }
 
@@ -197,4 +209,68 @@ export function upstreamError(r: UpstreamResult<unknown>, fallbackStatus = 400) 
 export function unreachable(err: unknown) {
   console.error('[auth] new-api 请求失败:', err)
   return json({ ok: false, code: 'UPSTREAM_UNREACHABLE' }, 502)
+}
+
+/**
+ * 同一个刷新令牌的并发刷新合并成一次上游调用。控制台一个页面会并行发好几个请求，
+ * 访问令牌恰好过期时它们会同时拿旧的刷新令牌去换；new-api 虽然有 30 秒重放窗口兜底，
+ * 合并后既省请求，也不依赖那个窗口。结果保留几秒，覆盖稍晚到达的同批请求。
+ */
+const inflight = new Map<string, Promise<UpstreamResult<AuthData>>>()
+const REFRESH_SHARE_MS = 5_000
+
+function refreshOnce(req: NextRequest, refreshToken: string) {
+  let p = inflight.get(refreshToken)
+  if (!p) {
+    p = upstream<AuthData>(req, '/api/user/auth/refresh', { method: 'POST', refreshToken })
+    inflight.set(refreshToken, p)
+    const forget = () => setTimeout(() => inflight.delete(refreshToken), REFRESH_SHARE_MS)
+    p.then(forget, () => inflight.delete(refreshToken))
+  }
+  return p
+}
+
+export type AuthedCall<T> = {
+  /** 上游结果；null 表示没有登录态或会话已失效 */
+  result: UpstreamResult<T> | null
+  /** 把这次调用里刷新得到的令牌（或会话失效后的清除）写进响应 */
+  commit: (res: NextResponse) => NextResponse
+}
+
+const keep = (res: NextResponse) => res
+const drop = (res: NextResponse) => {
+  clearSession(res)
+  return res
+}
+
+/**
+ * 以当前登录用户身份调用 new-api。
+ * 先用现有访问令牌；没有或被拒（401）时用刷新令牌换一对新的，再重试一次。
+ * 刷新会轮换刷新令牌，所以调用方必须把 commit 应用到最终响应上。
+ * 网关临时故障时不清 Cookie，免得把人误踢下线。
+ */
+export async function callAsUser<T>(
+  req: NextRequest,
+  path: string,
+  opts: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; body?: unknown } = {}
+): Promise<AuthedCall<T>> {
+  const { access, refresh } = readTokens(req)
+  if (access) {
+    const r = await upstream<T>(req, path, { ...opts, accessToken: access })
+    if (r.status !== 401) return { result: r, commit: keep }
+  }
+  if (!refresh) return { result: null, commit: drop }
+
+  const rr = await refreshOnce(req, refresh)
+  const data = rr.body.data
+  if (!rr.body.success || !data?.access_token) {
+    if (rr.status === 401 || rr.refreshCleared) return { result: null, commit: drop }
+    return { result: rr as unknown as UpstreamResult<T>, commit: keep }
+  }
+  const commit = (res: NextResponse) => {
+    storeSession(res, data, rr.refresh)
+    return res
+  }
+  const r = await upstream<T>(req, path, { ...opts, accessToken: data.access_token })
+  return { result: r, commit }
 }
