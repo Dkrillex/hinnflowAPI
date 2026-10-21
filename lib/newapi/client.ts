@@ -79,6 +79,23 @@ async function getJSON<T>(path: string, revalidate = REVALIDATE_SECONDS): Promis
   return body as T
 }
 
+/**
+ * 文档示例里用的模型名：取网关上一个支持 OpenAI 格式的真实模型，优先 GPT 系。
+ * 拿不到就用兜底值，文档照样能渲染。
+ */
+export async function fetchExampleModel(fallback = 'gpt-6-astra'): Promise<string> {
+  try {
+    const r = await getJSON<PricingPayload>('/api/pricing', 3600)
+    const names = r.data
+      .filter((m) => !m.supported_endpoint_types || m.supported_endpoint_types.includes('openai'))
+      .map((m) => m.model_name)
+      .sort()
+    return names.find((n) => n.startsWith('gpt-')) ?? names[0] ?? fallback
+  } catch {
+    return fallback
+  }
+}
+
 /** 站点设置（额度换算、展示币种），5 分钟回源一次 */
 export async function fetchSiteStatus(): Promise<SiteStatus> {
   const r = await getJSON<{ data: SiteStatus }>('/api/status', 300)
