@@ -24,7 +24,7 @@ export function LogoMark({ className = '' }: { className?: string }) {
   )
 }
 
-/** 图标 + 品牌名，尾部 "AI" 用衬线斜体，与希流两个现有站点的锁定形式一致 */
+/** 图标 + 品牌名，尾部 "AI" 用衬线正体（不倾斜） */
 export function LogoLockup({
   className = '',
   markClass = 'h-6 w-7',
@@ -38,8 +38,8 @@ export function LogoLockup({
     <span className={`flex items-center gap-2 select-none ${className}`}>
       <LogoMark className={markClass} />
       <span className={nameClass}>
-        {brand.nameMain}
-        <span className="font-serif italic">{brand.nameAccent}</span>
+        {brand.nameMain}{' '}
+        <span className="font-serif">{brand.nameAccent}</span>
       </span>
     </span>
   )

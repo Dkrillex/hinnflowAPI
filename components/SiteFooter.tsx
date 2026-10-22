@@ -32,8 +32,8 @@ export function SiteFooter() {
             <div className="flex items-center gap-2 text-fg">
               <LogoMark className="h-6 w-7" />
               <span className="text-[1.0625rem] font-medium tracking-tight">
-                {brand.nameMain}
-                <span className="font-serif italic">{brand.nameAccent}</span>
+                {brand.nameMain}{' '}
+                <span className="font-serif">{brand.nameAccent}</span>
               </span>
             </div>
             <p className="mt-4 max-w-[18rem] text-[0.875rem] leading-relaxed text-muted">{footer.tagline}</p>
