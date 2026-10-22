@@ -43,24 +43,25 @@ const en = {
     headingLead: 'Covering ',
     headingAccent: 'Global Mainstream AI Models',
     headingTail: 'Meeting Diverse Needs',
+    // 与网关 /api/pricing 当前上架的模型一致；上新或下架时同步修改这里
     items: [
       {
-        title: 'Global Models',
-        desc: 'Frontier models including GPT-6 Astra, Claude Fable 5.1, and Gemini 3.8 Flash.',
+        title: 'OpenAI',
+        desc: 'GPT-6 Astra, GPT-6.1 Sol, GPT-6 Sol and GPT-5.6 Sol, connected directly to the official API.',
       },
       {
-        title: 'Local Models',
-        desc: 'China-hosted models like Qwen3-Max, DeepSeek V4, GLM-5 and Kimi K2.',
+        title: 'DeepSeek',
+        desc: 'DeepSeek V4 Pro, V4 Flash and V4.1 Flash. V4 Pro and V4 Flash cost half as much off-peak.',
       },
       {
-        title: 'Multimodal',
-        desc: 'Supports image generation, speech synthesis, video analysis, and more.',
+        title: 'Google Gemini',
+        desc: 'Gemini 3.8 Flash and 3.5 Flash, called in the same OpenAI format with the same key.',
       },
     ],
     columns: [
-      { vendor: 'OpenAI', label: 'ChatGPT', tags: ['GPT-6 Astra', 'GPT-5.6 Luna', 'GPT-5.6 Terra'] },
-      { vendor: 'Claude', label: 'Claude', tags: ['Claude Fable 5.1', 'Claude Mythos 5.1', 'Claude Opus 5'] },
-      { vendor: 'Gemini', label: 'Gemini', tags: ['Gemini 3.8 Flash', 'Gemini Omni 1.1'] },
+      { vendor: 'OpenAI', label: 'OpenAI', tags: ['GPT-6 Astra', 'GPT-6.1 Sol', 'GPT-6 Sol', 'GPT-5.6 Sol'] },
+      { vendor: 'DeepSeek', label: 'DeepSeek', tags: ['DeepSeek V4 Pro', 'DeepSeek V4 Flash', 'DeepSeek V4.1 Flash'] },
+      { vendor: 'Gemini', label: 'Gemini', tags: ['Gemini 3.8 Flash', 'Gemini 3.5 Flash'] },
     ],
   },
   features: {
@@ -541,22 +542,22 @@ const zh: Dict = {
     headingTail: '满足多样化需求',
     items: [
       {
-        title: '海外模型',
-        desc: 'GPT-6 Astra、Claude Fable 5.1、Gemini 3.8 Flash 等前沿模型官方直连，版本跟随上游同步。',
+        title: 'OpenAI',
+        desc: 'GPT-6 Astra、GPT-6.1 Sol、GPT-6 Sol、GPT-5.6 Sol，官方接口直连。',
       },
       {
-        title: '国内模型',
-        desc: '通义千问 Qwen3-Max、DeepSeek V4、智谱 GLM-5、Kimi K2 就近接入，低延迟、可合规。',
+        title: 'DeepSeek',
+        desc: 'DeepSeek V4 Pro、V4 Flash、V4.1 Flash。V4 Pro 与 V4 Flash 闲时价格减半。',
       },
       {
-        title: '多模态',
-        desc: '图像生成、语音合成、视频理解与向量化，同一把密钥全部覆盖。',
+        title: 'Google Gemini',
+        desc: 'Gemini 3.8 Flash、3.5 Flash，同样用 OpenAI 格式、同一把密钥调用。',
       },
     ],
     columns: [
-      { vendor: 'OpenAI', label: 'ChatGPT', tags: ['GPT-6 Astra', 'GPT-5.6 Luna', 'GPT-5.6 Terra'] },
-      { vendor: 'Claude', label: 'Claude', tags: ['Claude Fable 5.1', 'Claude Mythos 5.1', 'Claude Opus 5'] },
-      { vendor: 'Gemini', label: 'Gemini', tags: ['Gemini 3.8 Flash', 'Gemini Omni 1.1'] },
+      { vendor: 'OpenAI', label: 'OpenAI', tags: ['GPT-6 Astra', 'GPT-6.1 Sol', 'GPT-6 Sol', 'GPT-5.6 Sol'] },
+      { vendor: 'DeepSeek', label: 'DeepSeek', tags: ['DeepSeek V4 Pro', 'DeepSeek V4 Flash', 'DeepSeek V4.1 Flash'] },
+      { vendor: 'Gemini', label: 'Gemini', tags: ['Gemini 3.8 Flash', 'Gemini 3.5 Flash'] },
     ],
   },
   features: {

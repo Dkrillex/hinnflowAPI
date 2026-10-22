@@ -7,8 +7,11 @@
 
 export const NEWAPI_BASE_URL = (process.env.NEWAPI_BASE_URL ?? 'http://8.134.206.56:3000').replace(/\/+$/, '')
 
-/** 展示给用户的调用地址（示例代码里用）。网关挂了域名后用 NEWAPI_PUBLIC_URL 指过去 */
-export const NEWAPI_PUBLIC_URL = (process.env.NEWAPI_PUBLIC_URL ?? NEWAPI_BASE_URL).replace(/\/+$/, '')
+/**
+ * 对用户展示的网关地址：文档与示例代码里的 Base URL、控制台快速接入、找回密码与在线充值外链。
+ * 与 NEWAPI_BASE_URL 分开：服务端回源可以走内网 / IP，用户看到的始终是 HTTPS 域名。
+ */
+export const NEWAPI_PUBLIC_URL = (process.env.NEWAPI_PUBLIC_URL ?? 'https://api.hinnflow.com').replace(/\/+$/, '')
 
 /** 回源间隔（秒），价格与可用性数据都按这个节奏刷新 */
 export const REVALIDATE_SECONDS = 60
